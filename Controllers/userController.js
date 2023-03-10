@@ -11,8 +11,8 @@ module.exports.userRegistration = (req, res) => {
 		if(result !== null){
 			return res.send("Email already exists!");
 		}
+		// Create a new user
 		else{
-			// Create a new user
 			let newUser = new User({
 				firstName: input.firstName,
 				lastName: input.lastName,
