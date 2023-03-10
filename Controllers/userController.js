@@ -7,10 +7,12 @@ module.exports.userRegistration = (req, res) => {
 	let input = req.body;
 	User.findOne({email: input.email})
 	.then(result => {
+		// Check if email already exists
 		if(result !== null){
 			return res.send("Email already exists!");
 		}
 		else{
+			// Create a new user
 			let newUser = new User({
 				firstName: input.firstName,
 				lastName: input.lastName,

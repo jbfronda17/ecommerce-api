@@ -12,12 +12,10 @@ const userSchema = new mongoose.Schema({
 	},
 	email: {
 		type: String,
-		unique: true,
 		required: [true, "Email is required"]
 	},
 	mobile: {
 		type: String,
-		unique: true,
 		required: [true, "Mobile Number is required"]
 	},
 	password: {
