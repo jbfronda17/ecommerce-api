@@ -6,7 +6,7 @@ const port = process.env.PORT || 4000;
 
 // MongoDB connection
 mongoose.set("strictQuery", true)
-mongoose.connect(`${process.env.MONGODB_URI}`, {
+mongoose.connect(process.env.MONGODB_URI, {
 	useNewUrlParser: true,
 	useUnifiedTopology: true
 });
