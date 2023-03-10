@@ -27,3 +27,26 @@ module.exports.userRegistration = (req, res) => {
 	})
 	.catch(error => res.send(error));
 };
+
+// User authentication (Login)
+module.exports.userAuthentication = (request, response) => {
+	let input = request.body;
+	User.findOne({email: input.email})
+	.then(result => {
+		// Check if email is already registered
+		if(result === null){
+			return response.send("Email not registered!")
+		}
+		// Check if password is correct
+		else{
+			const isPasswordCorrect = bcrypt.compareSync(input.password, result.password)
+			if(isPasswordCorrect){
+				return response.send({auth: auth.createAccessToken(result)});
+			}
+			else{
+				return response.send("Wrong password");
+			}
+		}
+	})
+	.catch(error => response.send(error));
+};
