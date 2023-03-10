@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const User = require("../Models/userSchema.js");
+const auth = require("../auth.js");
 
 // User registration
 module.exports.userRegistration = (req, res) => {
@@ -41,6 +42,7 @@ module.exports.userAuthentication = (request, response) => {
 		else{
 			const isPasswordCorrect = bcrypt.compareSync(input.password, result.password)
 			if(isPasswordCorrect){
+				// Returns the created access token
 				return response.send({auth: auth.createAccessToken(result)});
 			}
 			else{
@@ -49,4 +51,15 @@ module.exports.userAuthentication = (request, response) => {
 		}
 	})
 	.catch(error => response.send(error));
+};
+
+// User details
+module.exports.userDetails = (request, response) => {
+	// Retrieve payload
+	const userData = auth.decode(request.headers.authorization);
+	User.findById(userData._id)
+	.then(result => {
+		result.password = "hidden";
+		return response.send(result);
+	})
 };
