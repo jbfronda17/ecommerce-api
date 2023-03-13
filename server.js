@@ -5,6 +5,7 @@ const cors = require("cors");
 const dotenv = require("dotenv").config();
 const port = process.env.PORT || 4000;
 const userRoutes = require("./Routes/userRoutes.js");
+const productRoutes = require("./Routes/productRoutes.js");
 
 // MongoDB connection
 mongoose.set("strictQuery", true)
@@ -27,6 +28,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(cors());
 
 app.use("/user", userRoutes);
+app.use("/product", productRoutes);
 
 app.listen(port, () => {
 	console.log(`Server is running at port ${port}`);
