@@ -46,8 +46,16 @@ module.exports.allProducts = (req, res) => {
 };
 
 // Retrieve all active products
-module.exports.allActiveProducts = (req, res) => {
+module.exports.allActive = (req, res) => {
 	Product.find({isActive: true})
 	.then(result => res.send(result))
 	.catch(error => res.send(error))
+};
+
+// Retrieve single product
+module.exports.productDetails = (request, response) => {
+	const productId = request.params.productId;
+	Product.findById(productId)
+	.then(result => response.send(result))
+	.catch(error => response.send(error))
 };

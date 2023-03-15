@@ -9,6 +9,6 @@ router.post("/addProduct", auth.verify, productController.addProduct);
 // Retrieve all products (Admin only)
 router.get("/allProducts", auth.verify, productController.allProducts);
 // Retrieve all active products
-router.get("/allActiveProducts", productController.allActiveProducts);
+router.get("/allActive", productController.allActive);
 
 module.exports = router;
