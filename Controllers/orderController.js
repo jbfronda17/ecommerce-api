@@ -38,3 +38,16 @@ module.exports.createOrder = (req, res) => {
 		.catch(error => res.send(error))
 	}
 };
+
+// Retrieve all orders (Admin only)
+module.exports.allOrders = (req, res) => {
+	const userData = auth.decode(req.headers.authorization);
+	if(userData.isAdmin === false){
+		return res.send("Access denied. Not an admin.")
+	}
+	else{
+		Order.find({})
+		.then(result => res.send(result))
+		.catch(error => res.send(error))
+	}
+};
