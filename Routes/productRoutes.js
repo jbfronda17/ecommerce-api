@@ -16,5 +16,7 @@ router.get("/allActive", productController.allActive);
 router.get("/:productId", productController.productDetails);
 // Update product information (Admin only)
 router.put("/update/:productId", auth.verify, productController.updateProduct);
+// Archive product (Admin only)
+router.put("/archive/:productId", auth.verify, productController.archiveProduct);
 
 module.exports = router;
