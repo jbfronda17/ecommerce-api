@@ -51,3 +51,32 @@ module.exports.allOrders = (req, res) => {
 		.catch(error => res.send(error))
 	}
 };
+
+// Retrieve authenticated user's orders
+module.exports.userOrders = (req, res) => {
+	const userData = auth.decode(req.headers.authorization);
+	const userId = req.params.userId;
+	Order.find({userId: userId})
+	.then(result => {
+		if(userId === userData._id){
+			if(result === null){
+				return res.send("You have no orders yet.")
+			}
+			else{
+				return res.send(result)
+			}
+		}
+		else if(userData.isAdmin === true){
+			if(result === null){
+				return res.send("User has no orders yet.")
+			}
+			else{
+				return res.send(result)
+			}
+		}
+		else{
+			return res.send("Acess denied")
+		}
+	})
+	.catch(error => res.send(error))
+};
