@@ -79,9 +79,37 @@ module.exports.updateProduct = (req, res) => {
 					image: input.image,
 					name: input.name,
 					description: input.description,
+					stock: input.stock,
 					price: input.price
 				}
 				Product.findByIdAndUpdate(productId, updatedProduct, {new: true})
+				.then(result => res.send(result))
+				.catch(error => res.send(error))
+			}
+		})
+		.catch(error => res.send(error))
+	}
+};
+
+// Archive product (Admin only)
+module.exports.archiveProduct = (req, res) => {
+	let input = req.body;
+	const productId = req.params.productId;
+	const userData = auth.decode(req.headers.authorization);
+	if(userData.isAdmin === false){
+		return res.send("Access denied. Not an admin.")
+	}
+	else{
+		Product.findById(productId)
+		.then(result => {
+			if(productId === null){
+				return res.send("Product Id not found. Please try again.")
+			}
+			else{
+				let archivedProduct = {
+					isActive: input.isActive
+				}
+				Product.findByIdAndUpdate(productId, archivedProduct, {new: true})
 				.then(result => res.send(result))
 				.catch(error => res.send(error))
 			}
