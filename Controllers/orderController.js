@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const User = require("../Models/userSchema.js");
 const Product = require("../Models/productSchema.js");
 const Order = require("../Models/orderSchema.js");
 const auth = require("../auth.js");
@@ -12,21 +13,26 @@ module.exports.createOrder = (req, res) => {
 		return res.send("For users only.")
 	}
 	else{
-		Product.findById(productId)
-		.then(product => {
-			let newOrder = new Order({
-				userId: userData._id,
-				username: input.username,
-				productId: productId,
-				cover: product.cover,
-				name: product.name,
-				description: product.description,
-				quantity: input.quantity,
-				price: product.price,
-				subtotal: input.quantity * product.price,
+		User.findById(userData._id)
+		.then(user => {
+			Product.findById(productId)
+			.then(product => {
+				let newOrder = new Order({
+					userId: userData._id,
+					firstName: user.firstName,
+					lastName: user.lastName,
+					productId: productId,
+					cover: product.cover,
+					name: product.name,
+					description: product.description,
+					quantity: input.quantity,
+					price: product.price,
+					subtotal: input.quantity * product.price,
+				})
+				newOrder.save()
+				.then(order => res.send(order))
+				.catch(error => res.send(error))
 			})
-			newOrder.save()
-			.then(order => res.send(order))
 			.catch(error => res.send(error))
 		})
 		.catch(error => res.send(error))
