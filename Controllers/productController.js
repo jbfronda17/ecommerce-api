@@ -17,7 +17,8 @@ module.exports.addProduct = (req, res) => {
 			}
 			else{
 				let newProduct = new Product({
-					image: input.image,
+					cover: input.cover,
+					images: input.images,
 					name: input.name,
 					description: input.description,
 					stock: input.stock,
@@ -76,7 +77,8 @@ module.exports.updateProduct = (req, res) => {
 			}
 			else{
 				let updatedProduct = {
-					image: input.image,
+					cover: input.cover,
+					images: input.images,
 					name: input.name,
 					description: input.description,
 					stock: input.stock,
