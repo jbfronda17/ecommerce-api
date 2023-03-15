@@ -1,9 +1,13 @@
 const mongoose = require("mongoose");
 
 const productSchema = new mongoose.Schema({
-	image: {
+	cover: {
+		type: String,
+		required: [true, "Product cover photo is required"]
+	},
+	images: {
 		type: Array,
-		required: [true, "Product image is required"]
+		required: [true, "Product image/s is/are required"]
 	},
 	name: {
 		type: String,
@@ -27,7 +31,7 @@ const productSchema = new mongoose.Schema({
 	},
 	createdOn: {
 		type: String,
-		default: new Date().toLocaleString("en-US", {timeZone: 'Asia/Manila'})
+		default: new Date().toLocaleString("en-US", {timeZone: "Asia/Manila"})
 	}
 });
 
