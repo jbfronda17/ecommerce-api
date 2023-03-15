@@ -1,11 +1,13 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const app = express();
 const cors = require("cors");
 const dotenv = require("dotenv").config();
+const app = express();
 const port = process.env.PORT || 4000;
+
 const userRoutes = require("./Routes/userRoutes.js");
 const productRoutes = require("./Routes/productRoutes.js");
+const orderRoutes = require("./Routes/orderRoutes.js");
 
 // MongoDB connection
 mongoose.set("strictQuery", true)
@@ -29,6 +31,7 @@ app.use(cors());
 
 app.use("/user", userRoutes);
 app.use("/product", productRoutes);
+app.use("/order", orderRoutes);
 
 app.listen(port, () => {
 	console.log(`Server is running at port ${port}`);
