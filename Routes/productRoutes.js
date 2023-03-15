@@ -6,5 +6,7 @@ const productController = require("../Controllers/productController.js");
 // Routes without params
 // Create product (Admin only)
 router.post("/addProduct", auth.verify, productController.addProduct);
+// Retrieve all products (Admin only)
+router.get("/allProducts", auth.verify, productController.allProducts);
 
 module.exports = router;
