@@ -10,5 +10,7 @@ router.get("/allOrders", auth.verify, orderController.allOrders);
 // Routes with params
 // Non-admin user checkout (Create order)
 router.post("/:productId", auth.verify, orderController.createOrder);
+// Retrieve authenticated user's orders
+router.get("/allOrders/:userId", auth.verify, orderController.userOrders);
 
 module.exports = router;
