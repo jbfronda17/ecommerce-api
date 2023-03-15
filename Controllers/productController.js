@@ -31,3 +31,16 @@ module.exports.addProduct = (request, response) => {
 		.catch(error => response.send(error));
 	}
 };
+
+// Retrieve all products (Admin only)
+module.exports.allProducts = (request, response) => {
+	const userData = auth.decode(request.headers.authorization);
+	if(userData.isAdmin === false){
+		return response.send("Access denied. Not an admin")
+	}
+	else{
+		Product.find({})
+		.then(result => response.send(result))
+		.catch(error => response.send(error))
+	}
+};
