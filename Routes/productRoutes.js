@@ -14,5 +14,7 @@ router.get("/allActive", productController.allActive);
 // Routes with params
 // Retrieve single product
 router.get("/:productId", productController.productDetails);
+// Update product information (Admin only)
+router.put("/update/:productId", auth.verify, productController.updateProduct);
 
 module.exports = router;
