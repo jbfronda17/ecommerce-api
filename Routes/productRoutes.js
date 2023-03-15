@@ -11,4 +11,8 @@ router.get("/allProducts", auth.verify, productController.allProducts);
 // Retrieve all active products
 router.get("/allActive", productController.allActive);
 
+// Routes with params
+// Retrieve single product
+router.get("/:productId", productController.productDetails);
+
 module.exports = router;

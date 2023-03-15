@@ -53,9 +53,9 @@ module.exports.allActive = (req, res) => {
 };
 
 // Retrieve single product
-module.exports.productDetails = (request, response) => {
-	const productId = request.params.productId;
+module.exports.productDetails = (req, res) => {
+	const productId = req.params.productId;
 	Product.findById(productId)
-	.then(result => response.send(result))
-	.catch(error => response.send(error))
+	.then(result => res.send(result))
+	.catch(error => res.send(error))
 };
