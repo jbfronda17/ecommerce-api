@@ -27,7 +27,7 @@ const productSchema = new mongoose.Schema({
 	},
 	createdOn: {
 		type: String,
-		default: new Date().toISOString().replace('T', ' ').substr(0, 16)
+		default: new Date().toLocaleString("en-US", {timeZone: 'Asia/Manila'})
 	}
 });
 
