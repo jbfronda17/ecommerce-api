@@ -5,9 +5,13 @@ const orderSchema = new mongoose.Schema({
 		type: String,
 		required: [true, "User Id is required"]
 	},
-	username: {
+	firstName: {
 		type: String,
-		required: [true, "Username is required"]
+		required: [true, "First Name is required"]
+	},
+	lastName: {
+		type: String,
+		required: [true, "Last Name is required"]
 	},
 	productId: {
 		type: String,
