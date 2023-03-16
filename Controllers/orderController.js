@@ -59,7 +59,7 @@ module.exports.userOrders = (req, res) => {
 	Order.find({userId: userId})
 	.then(result => {
 		if(userId === userData._id){
-			if(result === null){
+			if(result.length === 0){
 				return res.send("You have no orders yet.")
 			}
 			else{
@@ -67,7 +67,7 @@ module.exports.userOrders = (req, res) => {
 			}
 		}
 		else if(userData.isAdmin === true){
-			if(result === null){
+			if(result.length === 0){
 				return res.send("User has no orders yet.")
 			}
 			else{
