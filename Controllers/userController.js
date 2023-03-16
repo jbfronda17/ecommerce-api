@@ -4,72 +4,66 @@ const User = require("../Models/userSchema.js");
 const auth = require("../auth.js");
 
 // User registration
-module.exports.userRegistration = (req, res) => {
+async function userRegistration(req, res) {
 	let input = req.body;
-	// Check if email already exists
-	User.findOne({email: input.email})
-	.then(result => {
-		if(result !== null){
+	try {
+		const userEmail = await User.findOne({email: input.email});
+		const userMobile = await User.findOne({mobile: input.mobile});
+		// Check if email already exists
+		if(userEmail !== null) {
 			return res.send("This email is already in use!");
-		}
-		else{
-			// Check if mobile number already exists
-			User.findOne({mobile: input.mobile})
-			.then(result => {
-				if(result !== null){
-					return res.send("This mobile number is already in use!")
-				}
-				// Create a new user
-				else{
-					let newUser = new User({
-						firstName: input.firstName,
-						lastName: input.lastName,
-						email: input.email,
-						mobile: input.mobile,
-						password: bcrypt.hashSync(input.password, 10)
-					})
-					newUser.save()
-					.then(user => res.send(user))
-					.catch(error => res.send(error));
-				}
-			})
-			.catch(error => res.send(error));
-		}
-	})
-	.catch(error => res.send(error));
+		// Check if mobile number already exists
+		} else if(userMobile !== null) {
+			return res.send("This mobile number is already in use!")
+		} else {
+			// Create a new user
+			let newUser = new User({
+				firstName: input.firstName,
+				lastName: input.lastName,
+				email: input.email,
+				mobile: input.mobile,
+				password: bcrypt.hashSync(input.password, 10)
+			});
+			await newUser.save();
+			return res.send(newUser);
+		}	
+	} catch(err) {
+		return res.send(err);
+	}
 };
+
+module.exports.userRegistration = userRegistration;
 
 // User authentication (Login)
-module.exports.userAuthentication = (req, res) => {
+async function userAuthentication(req, res) {
 	let input = req.body;
-	User.findOne({email: input.email})
-	.then(result => {
+	try {
+		const user = await User.findOne({email: input.email});
 		// Check if email is already registered
-		if(result === null){
-			return res.send("This email is not yet registered, please register first!")
+		if(user === null) {
+			return res.send("This email is not yet registered, please register first!");
+		} else {
+			// Check if password is correct
+			const isPasswordCorrect = bcrypt.compareSync(input.password, user.password);
+			return isPasswordCorrect? res.send({auth: auth.createAccessToken(user)}) : res.send("Wrong password, please try again!");
 		}
-		// Check if password is correct
-		else{
-			const isPasswordCorrect = bcrypt.compareSync(input.password, result.password)
-			if(isPasswordCorrect){
-				// Returns the created access token
-				return res.send({auth: auth.createAccessToken(result)});
-			}
-			else{
-				return res.send("Wrong password, please try again!");
-			}
-		}
-	})
-	.catch(error => res.send(error));
+	} catch(err) {
+		return res.send(err)
+	}
 };
 
+module.exports.userAuthentication = userAuthentication;
+
 // User details
-module.exports.userDetails = (req, res) => {
-	// Retrieve payload
+async function userDetails(req, res) {
 	const userData = auth.decode(req.headers.authorization);
-	User.findById(userData._id)
-	.then(result => {
-		result.password = "hidden";
-		return res.send(result);
-	})
+	try {
+		const user = await User.findById(userData._id);
+		user.password = "hidden";
+		return res.send(user);
+	} catch(err) {
+		return res.send(err);
+	}
 };
+
+module.exports.userDetails = userDetails;
