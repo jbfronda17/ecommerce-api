@@ -3,119 +3,109 @@ const Product = require("../Models/productSchema.js");
 const auth = require("../auth.js");
 
 // Create product (Admin only)
-module.exports.addProduct = (req, res) => {
-	let input = req.body;
+async function addProduct(req, res) {
 	const userData = auth.decode(req.headers.authorization);
-	if(userData.isAdmin === false){
-		return res.send("Access denied. Not an admin.")
-	}
-	else{
-		Product.findOne({name: input.name})
-		.then(result => {
-			if(result !== null){
-				return res.send("This product already exists!")
-			}
-			else{
-				let newProduct = new Product({
-					cover: input.cover,
-					images: input.images,
-					name: input.name,
-					description: input.description,
-					stock: input.stock,
-					price: input.price
-				})
-				newProduct.save()
-				.then(product => res.send(product))
-				.catch(error => res.send(error));
-			}
-		})
-		.catch(error => res.send(error));
+	let input = req.body;
+	let productName = await Product.findOne({name: input.name});
+	let newProduct = new Product({
+		cover: input.cover,
+		images: input.images,
+		name: input.name,
+		description: input.description,
+		stock: input.stock,
+		price: input.price
+	});
+	try {
+		if(!userData.isAdmin) {
+			return res.send("Access denied. Not an admin.");
+		} else if(productName !== null) {
+			return res.send("This product already exists!")
+		} else {
+			await newProduct.save();
+			return res.send(newProduct);
+		}
+	} catch(err) {
+		return res.send(err);
 	}
 };
+
+module.exports.addProduct = addProduct;
 
 // Retrieve all products (Admin only)
-module.exports.allProducts = (req, res) => {
+async function allProducts(req, res) {
 	const userData = auth.decode(req.headers.authorization);
-	if(userData.isAdmin === false){
-		return res.send("Access denied. Not an admin")
-	}
-	else{
-		Product.find({})
-		.then(result => res.send(result))
-		.catch(error => res.send(error))
+	try {
+		let products = await Product.find({});
+		return res.send(userData.isAdmin? products : "Access denied. Not an admin");
+	} catch(err) {
+		return res.send(err);
 	}
 };
+
+module.exports.allProducts = allProducts;
 
 // Retrieve all active products
-module.exports.allActive = (req, res) => {
-	Product.find({isActive: true})
-	.then(result => res.send(result))
-	.catch(error => res.send(error))
+async function allActive(req, res) {
+	try {
+		let activeProducts = await Product.find({isActive: true});
+		return res.send(activeProducts);
+	} catch(err) {
+		return res.send(err)
+	}
 };
+
+module.exports.allActive = allActive;
 
 // Retrieve single product
-module.exports.productDetails = (req, res) => {
+async function productDetails(req, res) {
 	const productId = req.params.productId;
-	Product.findById(productId)
-	.then(result => res.send(result))
-	.catch(error => res.send(error))
+	try {
+		let product = await Product.findById(productId);
+		return res.send(product);
+	} catch(err) {
+		return res.send(err);
+	}
 };
+
+module.exports.productDetails = productDetails;
 
 // Update product information (Admin only)
-module.exports.updateProduct = (req, res) => {
-	let input = req.body;
+async function updateProduct(req, res) {
 	const productId = req.params.productId;
 	const userData = auth.decode(req.headers.authorization);
-	if(userData.isAdmin === false){
-		return res.send("Access denied. Not an admin.")
-	}
-	else{
-		Product.findById(productId)
-		.then(result => {
-			if(result === null){
-				return res.send("Product Id not found. Please try again.")
-			}
-			else{
-				let updatedProduct = {
-					cover: input.cover,
-					images: input.images,
-					name: input.name,
-					description: input.description,
-					stock: input.stock,
-					price: input.price
-				}
-				Product.findByIdAndUpdate(productId, updatedProduct, {new: true})
-				.then(result => res.send(result))
-				.catch(error => res.send(error))
-			}
-		})
-		.catch(error => res.send(error))
+	let input = req.body;
+	let updatedProduct = {
+		cover: input.cover,
+		images: input.images,
+		name: input.name,
+		description: input.description,
+		stock: input.stock,
+		price: input.price
+	};
+	try {
+		await Product.findByIdAndUpdate(productId, updatedProduct, {new: true});
+		return res.send(userData.isAdmin? "Product details updated!" : "Access denied. Not an admin.");
+	} catch(err) {
+		return res.send(err);
 	}
 };
 
+module.exports.updateProduct = updateProduct;
+
 // Archive product (Admin only)
-module.exports.archiveProduct = (req, res) => {
-	let input = req.body;
+async function archiveProduct(req, res) {
 	const productId = req.params.productId;
 	const userData = auth.decode(req.headers.authorization);
-	if(userData.isAdmin === false){
-		return res.send("Access denied. Not an admin.")
-	}
-	else{
-		Product.findById(productId)
-		.then(result => {
-			if(productId === null){
-				return res.send("Product Id not found. Please try again.")
-			}
-			else{
-				let archivedProduct = {
-					isActive: input.isActive
-				}
-				Product.findByIdAndUpdate(productId, archivedProduct, {new: true})
-				.then(result => res.send(result))
-				.catch(error => res.send(error))
-			}
-		})
-		.catch(error => res.send(error))
+	let input = req.body;
+	let archivedProduct = {
+		isActive: input.isActive
+	};
+	try {
+		await Product.findByIdAndUpdate(productId, archivedProduct, {new: true});
+		return res.send(userData.isAdmin? "Product status updated!" : "Access denied. Not an admin.");
+	} catch(err) {
+		return res.send(err);
 	}
 };
+
+module.exports.archiveProduct = archiveProduct;
