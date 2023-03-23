@@ -7,20 +7,20 @@ async function addProduct(req, res) {
 	const userData = auth.decode(req.headers.authorization);
 	let input = req.body;
 	let productName = await Product.findOne({name: input.name});
-	let newProduct = new Product({
-		cover: input.cover,
-		images: input.images,
-		name: input.name,
-		description: input.description,
-		stock: input.stock,
-		price: input.price
-	});
 	try {
 		if(!userData.isAdmin) {
 			return res.send("Access denied. Not an admin.");
 		} else if(productName !== null) {
-			return res.send("This product already exists!")
+			return res.send("This product already exists!");
 		} else {
+			let newProduct = new Product({
+				cover: input.cover,
+				images: input.images,
+				name: input.name,
+				description: input.description,
+				stock: input.stock,
+				price: input.price
+			});
 			await newProduct.save();
 			return res.send(newProduct);
 		}
@@ -74,15 +74,15 @@ async function updateProduct(req, res) {
 	const productId = req.params.productId;
 	const userData = auth.decode(req.headers.authorization);
 	let input = req.body;
-	let updatedProduct = {
-		cover: input.cover,
-		images: input.images,
-		name: input.name,
-		description: input.description,
-		stock: input.stock,
-		price: input.price
-	};
 	try {
+		let updatedProduct = {
+			cover: input.cover,
+			images: input.images,
+			name: input.name,
+			description: input.description,
+			stock: input.stock,
+			price: input.price
+		};
 		await Product.findByIdAndUpdate(productId, updatedProduct, {new: true});
 		return res.send(userData.isAdmin? "Product details updated!" : "Access denied. Not an admin.");
 	} catch(err) {
@@ -97,10 +97,10 @@ async function archiveProduct(req, res) {
 	const productId = req.params.productId;
 	const userData = auth.decode(req.headers.authorization);
 	let input = req.body;
-	let archivedProduct = {
-		isActive: input.isActive
-	};
 	try {
+		let archivedProduct = {
+			isActive: input.isActive
+		};
 		await Product.findByIdAndUpdate(productId, archivedProduct, {new: true});
 		return res.send(userData.isAdmin? "Product status updated!" : "Access denied. Not an admin.");
 	} catch(err) {
