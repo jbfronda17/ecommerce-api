@@ -45,7 +45,7 @@ async function userAuthentication(req, res) {
 		} else {
 			// Check if password is correct
 			const isPasswordCorrect = bcrypt.compareSync(input.password, user.password);
-			return isPasswordCorrect? res.send({auth: auth.createAccessToken(user)}) : res.send("Wrong password, please try again!");
+			return res.send(isPasswordCorrect? {auth: auth.createAccessToken(user)} : "Wrong password, please try again!");
 		}
 	} catch(err) {
 		return res.send(err)
